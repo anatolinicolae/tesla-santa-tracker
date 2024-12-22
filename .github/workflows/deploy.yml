@@ -17,16 +17,33 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4.1.0
         with:
-          node-version: '22'  # or your preferred Node.js version
+          node-version: '22'
           cache: 'yarn'
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache yarn dependencies
+        uses: actions/cache@v4.2.0
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --production
+        run: yarn install --frozen-lockfile
 
       - name: Build project
         run: yarn build
         env:
           NODE_ENV: production
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_CLARITY_PROJECT_ID: ${{ secrets.VITE_CLARITY_PROJECT_ID }}
+
 
       - name: Deploy via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
@@ -36,8 +53,8 @@ jobs:
           port: ${{ secrets.SFTP_PORT }}
           local_path: './dist/*'
           remote_path: ${{ secrets.SFTP_PATH }}
-          sftp_only: true
-          password: ${{ secrets.SFTP_PASSWORD }}
+          delete_remote_files: true
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deployment Status
         if: always()
