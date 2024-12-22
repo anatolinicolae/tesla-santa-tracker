@@ -57,7 +57,7 @@ export default function App() {
           {speed && speed > 0 && (
             <span className="text-center">at {speed} km/h</span>
           )}
-          {power && power < 0 && (
+          {state !== 'charging' && power < 0 && (
             <span className="text-center">Now generating {power}Wh</span>
           )}
         </div>
