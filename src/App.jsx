@@ -10,10 +10,11 @@ export default function App() {
   const { speed, state } = useSettings();
 
   const message = {
-    online: "Currently dashing through the snow",
+    online: "About to jump on the sled",
     driving: "Currently dashing through the snow",
     offline: "Santa is offline...",
     asleep: "Santa is currently resting...",
+    suspended: "Santa about to rest...",
     charging: "Santa's loading Xmas presents...",
   };
 
