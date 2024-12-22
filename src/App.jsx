@@ -7,7 +7,7 @@ import useSettings from "./hooks/useSettings";
 export default function App() {
   Clarity.init(config.clarity_project_id);
 
-  const { speed, state } = useSettings();
+  const { power, speed, state } = useSettings();
 
   const message = {
     online: "About to jump on the sled",
@@ -54,9 +54,12 @@ export default function App() {
         </p>
         <div className="text-center mb-8 flex flex-col items-center">
           <span className="text-center">{state && message[state]}</span>
-          <span className="text-center">
-            {speed && speed > 0 && `at ${speed} km/h`}
-          </span>
+          {speed && speed > 0 && (
+            <span className="text-center">at {speed} km/h</span>
+          )}
+          {power && power < 0 && (
+            <span className="text-center">Now generating {power}Wh</span>
+          )}
         </div>
         <SantaTracker />
       </div>
